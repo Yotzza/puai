@@ -1,6 +1,13 @@
-<?php
+<html>
+    <body>
 
-echo "Pa da krenemo"
-echo "test 1"
+       
 
-?>
+        <?php echo "Pa da krenemo"; ?> <br>
+        <?php echo "test 2" ?>
+
+
+        
+
+    </body>
+</html>
