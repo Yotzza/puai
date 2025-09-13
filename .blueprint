@@ -3,10 +3,21 @@ created:
     - app/Http/Controllers/ZaposleniController.php
     - app/Http/Controllers/TransakcijaController.php
     - app/Http/Controllers/IzvestajController.php
+    - app/Http/Controllers/PocetnaController.php
     - tests/Feature/Http/Controllers/RobaControllerTest.php
     - tests/Feature/Http/Controllers/ZaposleniControllerTest.php
     - tests/Feature/Http/Controllers/TransakcijaControllerTest.php
     - tests/Feature/Http/Controllers/IzvestajControllerTest.php
+    - tests/Feature/Http/Controllers/PocetnaControllerTest.php
+    - app/Http/Requests/PocetnaStoreRequest.php
+    - app/Http/Requests/PocetnaUpdateRequest.php
+    - resources/views/pocetna/index.blade.php
+    - resources/views/pocetna/create.blade.php
+    - resources/views/pocetna/show.blade.php
+    - resources/views/pocetna/edit.blade.php
+updated:
+    - routes/web.php
+skipped:
     - resources/views/roba/index.blade.php
     - resources/views/roba/create.blade.php
     - resources/views/roba/show.blade.php
@@ -23,5 +34,3 @@ created:
     - resources/views/izvestaj/create.blade.php
     - resources/views/izvestaj/show.blade.php
     - resources/views/izvestaj/edit.blade.php
-updated:
-    - routes/web.php

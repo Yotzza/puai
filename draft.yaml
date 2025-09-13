@@ -7,3 +7,6 @@ controllers:
     resource
   Izvestaj:
     resource
+  Pocetna:
+    resource
+  
