@@ -2,107 +2,65 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Roba;
-use Illuminate\View\View;
-use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\RobaStoreRequest;
 use App\Http\Requests\RobaUpdateRequest;
+use App\Models\Roba;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class RobaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request): View
     {
-        $this->authorize('view-any', Roba::class);
+        $robas = Roba::all();
 
-        $search = $request->get('search', '');
-
-        $robas = Roba::search($search)
-            ->latest()
-            ->paginate(5)
-            ->withQueryString();
-
-        return view('app.robas.index', compact('robas', 'search'));
+        return view('roba.index', [
+            'robas' => $robas,
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create(Request $request): View
     {
-        $this->authorize('create', Roba::class);
-
-        return view('app.robas.create');
+        return view('roba.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(RobaStoreRequest $request): RedirectResponse
     {
-        $this->authorize('create', Roba::class);
+        $roba = Roba::create($request->validated());
 
-        $validated = $request->validated();
+        $request->session()->flash('roba.id', $roba->id);
 
-        $roba = Roba::create($validated);
-
-        return redirect()
-            ->route('robas.edit', $roba)
-            ->withSuccess(__('crud.common.created'));
+        return redirect()->route('robas.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Request $request, Roba $roba): View
     {
-        $this->authorize('view', $roba);
-
-        return view('app.robas.show', compact('roba'));
+        return view('roba.show', [
+            'roba' => $roba,
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Request $request, Roba $roba): View
     {
-        $this->authorize('update', $roba);
-
-        return view('app.robas.edit', compact('roba'));
+        return view('roba.edit', [
+            'roba' => $roba,
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(
-        RobaUpdateRequest $request,
-        Roba $roba
-    ): RedirectResponse {
-        $this->authorize('update', $roba);
+    public function update(RobaUpdateRequest $request, Roba $roba): RedirectResponse
+    {
+        $roba->update($request->validated());
 
-        $validated = $request->validated();
+        $request->session()->flash('roba.id', $roba->id);
 
-        $roba->update($validated);
-
-        return redirect()
-            ->route('robas.edit', $roba)
-            ->withSuccess(__('crud.common.saved'));
+        return redirect()->route('robas.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Request $request, Roba $roba): RedirectResponse
     {
-        $this->authorize('delete', $roba);
-
         $roba->delete();
 
-        return redirect()
-            ->route('robas.index')
-            ->withSuccess(__('crud.common.removed'));
+        return redirect()->route('robas.index');
     }
 }

@@ -2,118 +2,65 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Zaposleni;
-use Illuminate\View\View;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\ZaposleniStoreRequest;
 use App\Http\Requests\ZaposleniUpdateRequest;
+use App\Models\Zaposleni;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class ZaposleniController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request): View
     {
-        $this->authorize('view-any', Zaposleni::class);
+        $zaposlenis = Zaposleni::all();
 
-        $search = $request->get('search', '');
-
-        $zaposlenis = Zaposleni::search($search)
-            ->latest()
-            ->paginate(5)
-            ->withQueryString();
-
-        return view('app.zaposlenis.index', compact('zaposlenis', 'search'));
+        return view('zaposleni.index', [
+            'zaposlenis' => $zaposlenis,
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create(Request $request): View
     {
-        $this->authorize('create', Zaposleni::class);
-
-        return view('app.zaposlenis.create');
+        return view('zaposleni.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(ZaposleniStoreRequest $request): RedirectResponse
     {
-        $this->authorize('create', Zaposleni::class);
+        $zaposleni = Zaposleni::create($request->validated());
 
-        $validated = $request->validated();
+        $request->session()->flash('zaposleni.id', $zaposleni->id);
 
-        $validated['password'] = Hash::make($validated['password']);
-
-        $zaposleni = Zaposleni::create($validated);
-
-        return redirect()
-            ->route('zaposlenis.edit', $zaposleni)
-            ->withSuccess(__('crud.common.created'));
+        return redirect()->route('zaposlenis.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Request $request, Zaposleni $zaposleni): View
     {
-        $this->authorize('view', $zaposleni);
-
-        return view('app.zaposlenis.show', compact('zaposleni'));
+        return view('zaposleni.show', [
+            'zaposleni' => $zaposleni,
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Request $request, Zaposleni $zaposleni): View
     {
-        $this->authorize('update', $zaposleni);
-
-        return view('app.zaposlenis.edit', compact('zaposleni'));
+        return view('zaposleni.edit', [
+            'zaposleni' => $zaposleni,
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(
-        ZaposleniUpdateRequest $request,
-        Zaposleni $zaposleni
-    ): RedirectResponse {
-        $this->authorize('update', $zaposleni);
+    public function update(ZaposleniUpdateRequest $request, Zaposleni $zaposleni): RedirectResponse
+    {
+        $zaposleni->update($request->validated());
 
-        $validated = $request->validated();
+        $request->session()->flash('zaposleni.id', $zaposleni->id);
 
-        if (empty($validated['password'])) {
-            unset($validated['password']);
-        } else {
-            $validated['password'] = Hash::make($validated['password']);
-        }
-
-        $zaposleni->update($validated);
-
-        return redirect()
-            ->route('zaposlenis.edit', $zaposleni)
-            ->withSuccess(__('crud.common.saved'));
+        return redirect()->route('zaposlenis.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(
-        Request $request,
-        Zaposleni $zaposleni
-    ): RedirectResponse {
-        $this->authorize('delete', $zaposleni);
-
+    public function destroy(Request $request, Zaposleni $zaposleni): RedirectResponse
+    {
         $zaposleni->delete();
 
-        return redirect()
-            ->route('zaposlenis.index')
-            ->withSuccess(__('crud.common.removed'));
+        return redirect()->route('zaposlenis.index');
     }
 }

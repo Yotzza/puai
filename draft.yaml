@@ -1,0 +1,9 @@
+controllers:
+  Roba:
+    resource
+  Zaposleni:
+    resource
+  Transakcija:
+    resource
+  Izvestaj:
+    resource

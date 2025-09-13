@@ -2,123 +2,65 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Roba;
-use Illuminate\View\View;
-use App\Models\Zaposleni;
-use App\Models\Transakcija;
-use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\TransakcijaStoreRequest;
 use App\Http\Requests\TransakcijaUpdateRequest;
+use App\Models\Transakcija;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class TransakcijaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request): View
     {
-        $this->authorize('view-any', Transakcija::class);
+        $transakcijas = Transakcija::all();
 
-        $search = $request->get('search', '');
-
-        $transakcijas = Transakcija::search($search)
-            ->latest()
-            ->paginate(5)
-            ->withQueryString();
-
-        return view(
-            'app.transakcijas.index',
-            compact('transakcijas', 'search')
-        );
+        return view('transakcija.index', [
+            'transakcijas' => $transakcijas,
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create(Request $request): View
     {
-        $this->authorize('create', Transakcija::class);
-
-        $zaposlenis = Zaposleni::pluck('ime', 'zaposleni_id');
-        $robas = Roba::pluck('naziv', 'roba_id');
-
-        return view('app.transakcijas.create', compact('zaposlenis', 'robas'));
+        return view('transakcija.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(TransakcijaStoreRequest $request): RedirectResponse
     {
-        $this->authorize('create', Transakcija::class);
+        $transakcija = Transakcija::create($request->validated());
 
-        $validated = $request->validated();
+        $request->session()->flash('transakcija.id', $transakcija->id);
 
-        $transakcija = Transakcija::create($validated);
-
-        return redirect()
-            ->route('transakcijas.edit', $transakcija)
-            ->withSuccess(__('crud.common.created'));
+        return redirect()->route('transakcijas.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Request $request, Transakcija $transakcija): View
     {
-        $this->authorize('view', $transakcija);
-
-        return view('app.transakcijas.show', compact('transakcija'));
+        return view('transakcija.show', [
+            'transakcija' => $transakcija,
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Request $request, Transakcija $transakcija): View
     {
-        $this->authorize('update', $transakcija);
-
-        $zaposlenis = Zaposleni::pluck('ime', 'zaposleni_id');
-        $robas = Roba::pluck('naziv', 'roba_id');
-
-        return view(
-            'app.transakcijas.edit',
-            compact('transakcija', 'zaposlenis', 'robas')
-        );
+        return view('transakcija.edit', [
+            'transakcija' => $transakcija,
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(
-        TransakcijaUpdateRequest $request,
-        Transakcija $transakcija
-    ): RedirectResponse {
-        $this->authorize('update', $transakcija);
+    public function update(TransakcijaUpdateRequest $request, Transakcija $transakcija): RedirectResponse
+    {
+        $transakcija->update($request->validated());
 
-        $validated = $request->validated();
+        $request->session()->flash('transakcija.id', $transakcija->id);
 
-        $transakcija->update($validated);
-
-        return redirect()
-            ->route('transakcijas.edit', $transakcija)
-            ->withSuccess(__('crud.common.saved'));
+        return redirect()->route('transakcijas.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(
-        Request $request,
-        Transakcija $transakcija
-    ): RedirectResponse {
-        $this->authorize('delete', $transakcija);
-
+    public function destroy(Request $request, Transakcija $transakcija): RedirectResponse
+    {
         $transakcija->delete();
 
-        return redirect()
-            ->route('transakcijas.index')
-            ->withSuccess(__('crud.common.removed'));
+        return redirect()->route('transakcijas.index');
     }
 }

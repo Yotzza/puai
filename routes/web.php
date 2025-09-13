@@ -34,3 +34,12 @@ Route::prefix('/')
         Route::resource('izvestajs', IzvestajController::class);
         Route::resource('transakcijas', TransakcijaController::class);
     });
+
+
+Route::resource('robas', App\Http\Controllers\RobaController::class);
+
+Route::resource('zaposlenis', App\Http\Controllers\ZaposleniController::class);
+
+Route::resource('transakcijas', App\Http\Controllers\TransakcijaController::class);
+
+Route::resource('izvestajs', App\Http\Controllers\IzvestajController::class);

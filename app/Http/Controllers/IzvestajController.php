@@ -2,114 +2,65 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Izvestaj;
-use Illuminate\View\View;
-use App\Models\Zaposleni;
-use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\IzvestajStoreRequest;
 use App\Http\Requests\IzvestajUpdateRequest;
+use App\Models\Izvestaj;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class IzvestajController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request): View
     {
-        $this->authorize('view-any', Izvestaj::class);
+        $izvestajs = Izvestaj::all();
 
-        $search = $request->get('search', '');
-
-        $izvestajs = Izvestaj::search($search)
-            ->latest()
-            ->paginate(5)
-            ->withQueryString();
-
-        return view('app.izvestajs.index', compact('izvestajs', 'search'));
+        return view('izvestaj.index', [
+            'izvestajs' => $izvestajs,
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create(Request $request): View
     {
-        $this->authorize('create', Izvestaj::class);
-
-        $zaposlenis = Zaposleni::pluck('ime', 'zaposleni_id');
-
-        return view('app.izvestajs.create', compact('zaposlenis'));
+        return view('izvestaj.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(IzvestajStoreRequest $request): RedirectResponse
     {
-        $this->authorize('create', Izvestaj::class);
+        $izvestaj = Izvestaj::create($request->validated());
 
-        $validated = $request->validated();
+        $request->session()->flash('izvestaj.id', $izvestaj->id);
 
-        $izvestaj = Izvestaj::create($validated);
-
-        return redirect()
-            ->route('izvestajs.edit', $izvestaj)
-            ->withSuccess(__('crud.common.created'));
+        return redirect()->route('izvestajs.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Request $request, Izvestaj $izvestaj): View
     {
-        $this->authorize('view', $izvestaj);
-
-        return view('app.izvestajs.show', compact('izvestaj'));
+        return view('izvestaj.show', [
+            'izvestaj' => $izvestaj,
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Request $request, Izvestaj $izvestaj): View
     {
-        $this->authorize('update', $izvestaj);
-
-        $zaposlenis = Zaposleni::pluck('ime', 'zaposleni_id');
-
-        return view('app.izvestajs.edit', compact('izvestaj', 'zaposlenis'));
+        return view('izvestaj.edit', [
+            'izvestaj' => $izvestaj,
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(
-        IzvestajUpdateRequest $request,
-        Izvestaj $izvestaj
-    ): RedirectResponse {
-        $this->authorize('update', $izvestaj);
+    public function update(IzvestajUpdateRequest $request, Izvestaj $izvestaj): RedirectResponse
+    {
+        $izvestaj->update($request->validated());
 
-        $validated = $request->validated();
+        $request->session()->flash('izvestaj.id', $izvestaj->id);
 
-        $izvestaj->update($validated);
-
-        return redirect()
-            ->route('izvestajs.edit', $izvestaj)
-            ->withSuccess(__('crud.common.saved'));
+        return redirect()->route('izvestajs.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(
-        Request $request,
-        Izvestaj $izvestaj
-    ): RedirectResponse {
-        $this->authorize('delete', $izvestaj);
-
+    public function destroy(Request $request, Izvestaj $izvestaj): RedirectResponse
+    {
         $izvestaj->delete();
 
-        return redirect()
-            ->route('izvestajs.index')
-            ->withSuccess(__('crud.common.removed'));
+        return redirect()->route('izvestajs.index');
     }
 }

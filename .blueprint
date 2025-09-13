@@ -1,0 +1,27 @@
+created:
+    - app/Http/Controllers/RobaController.php
+    - app/Http/Controllers/ZaposleniController.php
+    - app/Http/Controllers/TransakcijaController.php
+    - app/Http/Controllers/IzvestajController.php
+    - tests/Feature/Http/Controllers/RobaControllerTest.php
+    - tests/Feature/Http/Controllers/ZaposleniControllerTest.php
+    - tests/Feature/Http/Controllers/TransakcijaControllerTest.php
+    - tests/Feature/Http/Controllers/IzvestajControllerTest.php
+    - resources/views/roba/index.blade.php
+    - resources/views/roba/create.blade.php
+    - resources/views/roba/show.blade.php
+    - resources/views/roba/edit.blade.php
+    - resources/views/zaposleni/index.blade.php
+    - resources/views/zaposleni/create.blade.php
+    - resources/views/zaposleni/show.blade.php
+    - resources/views/zaposleni/edit.blade.php
+    - resources/views/transakcija/index.blade.php
+    - resources/views/transakcija/create.blade.php
+    - resources/views/transakcija/show.blade.php
+    - resources/views/transakcija/edit.blade.php
+    - resources/views/izvestaj/index.blade.php
+    - resources/views/izvestaj/create.blade.php
+    - resources/views/izvestaj/show.blade.php
+    - resources/views/izvestaj/edit.blade.php
+updated:
+    - routes/web.php
