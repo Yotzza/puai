@@ -25,6 +25,8 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
+Route::get('/izvestaj', [IzvestajController::class, 'index'])->name('izvestaj.index');
+
 
 Route::prefix('/')
     ->middleware('auth')
